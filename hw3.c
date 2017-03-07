@@ -3,26 +3,26 @@
  * System Level - MW 1:30
  * Ji Li
  * Homework 3
+ *
+ * UNCOMMENT THE LINES IN MAIN TO VIEW THE ARRAYS
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdbool.h>
 
 int* makeRandIntArray ();
+int  cmp           (const void* p, const void* q);
+void mySort        (int* array, size_t size);
+void printTime     (float t);
+void printSize     (int arraySize);
+void printArray    (int *array);
+void printSchema   ();
+void printNewline  ();
+float stdlib_qsort (int* array, size_t size);
+float mySortTimer  (int* array, size_t size);
 
-int cmp          (const void* p, const void* q);
-int stdlib_qsort (int* array);
-int mySortTimer  (int* array);
-
-void mySort       (int* array);
-void printTime    (float t);
-void printSize    (int arraySize);
-void printSchema  ();
-void printNewline ();
-
-#define INITIAL_ARRAY_SIZE 2;
+#define INITIAL_ARRAY_SIZE 10000;
 int  arraySize = INITIAL_ARRAY_SIZE;
 int *array1    = NULL;
 int *array2    = NULL;
@@ -35,7 +35,7 @@ int* makeRandIntArray()
 {
     const int LARGEST_INT_SIZE = 10000;
 
-    int *array = malloc(arraySize * sizeof(int));
+    int *array = (int *)malloc(arraySize * sizeof(int));
     for (int i = 0; i < arraySize; i++)
     {
         array[i] = rand() % LARGEST_INT_SIZE;                                   // % limits the size of ints
@@ -49,21 +49,21 @@ int* makeRandIntArray()
  */
 int cmp (const void* p, const void* q)
 {
-    return ( *(int*) p - *(int*)q );
+    return ( *(int*)p - *(int*)q );
 }
 
 /*
  * Performs qsort function from stdlib given an input array
  * @returns the time the function took to sort the array in seconds
  */
-int stdlib_qsort(int* array)
+float stdlib_qsort(int* array, size_t size)
 {
     clock_t t1, t2;
     t1 = clock();
-    qsort((int *) array, sizeof(array)/sizeof(int), sizeof(int), cmp);
+    qsort((int *) array, size, sizeof(int), cmp);
     t2 = clock();
 
-    return (t2-t1) / ((float) CLOCKS_PER_SEC);
+    return (float) (t2-t1) / ((float) CLOCKS_PER_SEC);
 }
 
 /*
@@ -71,40 +71,41 @@ int stdlib_qsort(int* array)
  * @returns nothing
  * The input array is sorted in place
  */
-void mySort(int* array)
+void mySort(int* array, size_t size)
 {
-    bool sorted = false;
+    int sorted = 0;
 
     int temp;
 
-    while (!sorted) {
-        for (int i = 0; i < sizeof(array) / sizeof(int) - 1; i++)
+    do {
+        sorted = 1;
+
+        for (int i = 0; i < size - 1; i++)
         {
-            sorted = true;
 
             if (array[i] > array[i + 1])
             {
-                sorted = false;
+                sorted = 0;
                 temp = array[i];
                 array[i] = array[i + 1];
                 array[i + 1] = temp;
             }
         }
-    }
+    } while (sorted != 1);
 }
 
 /*
  * Calls mySort on the input array
  * @returns the time the function took to sort the array in seconds
  */
-int mySortTimer(int* array)
+float mySortTimer(int* array, size_t size)
 {
     clock_t t1, t2;
     t1 = clock();
-    mySort(array);
+    mySort(array, size);
     t2 = clock();
 
-    return (t2-t1) / ((float) CLOCKS_PER_SEC);
+    return (float) (t2-t1) / ((float) CLOCKS_PER_SEC);
 }
 
 /*
@@ -128,7 +129,7 @@ void printSize(int arraySize)
  */
 void printSchema()
 {
-    printf("Size\t\tqsort\t\tmerge sort\n");
+    printf("Size\t\tqsort\t\tmy sort\n");
 }
 
 /*
@@ -139,6 +140,9 @@ void printNewline()
     printf("\n");
 }
 
+/*
+* Prints the array
+*/
 void printArray(int *array)
 {
     printNewline();
@@ -149,6 +153,7 @@ void printArray(int *array)
     printNewline();
 }
 
+
 int main()
 {
     printSchema();
@@ -158,31 +163,27 @@ int main()
      * 10000, 20000, 40000, 80000
      */
     for (int i = 0; i < 4; i++) {
-        array1 = makeRandIntArray();
-        printArray(array1);
-        printTime(stdlib_qsort(array1));
-        printArray(array1);
-
-        array2 = makeRandIntArray();
-        printArray(array2);
-
-        printTime(mySortTimer(array2));
-        printArray(array2);
-
         printSize(arraySize);
 
+        array1 = makeRandIntArray();
+        // printArray(array1);
+        printTime(stdlib_qsort(array1, arraySize));
+        // printArray(array1);
+
+        array2 = makeRandIntArray();
+        // printArray(array2);
+        printTime(mySortTimer(array2, arraySize));
+        // printArray(array2);
+
+        printNewline();
         arraySize = arraySize * 2;
         free(array1);
         free(array2);
 
-        array1  = makeRandIntArray();
+        array1 = makeRandIntArray();
         array2 = makeRandIntArray();
 
     }
 
     return (0);
 }
-
-
-
-
