@@ -11,14 +11,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "hw3-print_functions.h"
+
 int* makeRandIntArray ();
 int  cmp           (const void* p, const void* q);
 void mySort        (int* array, size_t size);
-void printTime     (float t);
-void printSize     (int arraySize);
-void printArray    (int *array);
-void printSchema   ();
-void printNewline  ();
 float stdlib_qsort (int* array, size_t size);
 float mySortTimer  (int* array, size_t size);
 
@@ -108,51 +105,6 @@ float mySortTimer(int* array, size_t size)
     return (float) (t2-t1) / ((float) CLOCKS_PER_SEC);
 }
 
-/*
- * Prints the difference between two times in seconds
- */
-void printTime(float t)
-{
-    printf("%fs\t", t);
-}
-
-/*
- * Prints the size of the array
- */
-void printSize(int arraySize)
-{
-    printf("%d\t\t", arraySize);
-}
-
-/*
- * Prints the formatted starting output schema
- */
-void printSchema()
-{
-    printf("Size\t\tqsort\t\tmy sort\n");
-}
-
-/*
- * Prints a newline
- */
-void printNewline()
-{
-    printf("\n");
-}
-
-/*
-* Prints the array
-*/
-void printArray(int *array)
-{
-    printNewline();
-    for (int i = 0; i < arraySize; i++)
-    {
-        printf("%d, ", array[i]);
-    }
-    printNewline();
-}
-
 
 int main()
 {
@@ -166,14 +118,14 @@ int main()
         printSize(arraySize);
 
         array1 = makeRandIntArray();
-        // printArray(array1);
+        // printArray(array1, arraySize);
         printTime(stdlib_qsort(array1, arraySize));
-        // printArray(array1);
+        // printArray(array1, arraySize);
 
         array2 = makeRandIntArray();
-        // printArray(array2);
+        // printArray(array2, arraySize);
         printTime(mySortTimer(array2, arraySize));
-        // printArray(array2);
+        // printArray(array2, arraySize);
 
         printNewline();
         arraySize = arraySize * 2;
